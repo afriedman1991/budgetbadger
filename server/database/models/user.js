@@ -7,6 +7,7 @@ const User = db.Model.extend({
   tableName: 'users',
   initialize: function() {
     this.on('creating', this.hashPassword);
+    this.on('updating', this.hashPassword);
   },
   comparePassword: async function(input) {
     const match = await bcrypt.compare(input, this.get('password'));

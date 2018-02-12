@@ -241,6 +241,7 @@ module.exports = {
       if (exists) {
         throw new Error('That email already exists');
       }
+      args.date = new Date();
       const user = await new models.User(args).save();
       const token = jwt.sign({ user: _.pick(user.attributes, ['id', 'email'])}, APP_SECRET, {
         expiresIn: 360*60
@@ -333,17 +334,32 @@ module.exports = {
       const billCategory = await new models.BillCategory(args).save(null, {method: 'update'});
       return billCategory.attributes;
     },
-    deleteBillCategory: (parent, args, { knex }) => knex('bill_categories').where(args).del(),
-    createLoan: async (parent, args, { models }) => await new models.Loan(args).save(null, {method:'insert'}),
-    createLoanPayment: async (parent, args, { models }) => await new models.Loan_Payment(args).save(null, {method: 'insert'}),
-    getPasswordRecoveryEmail: (parent, args, { knex, user }) => {
+    getPasswordRecoveryEmail: async (parent, args, { knex, models, APP_SECRET }) => {
+      console.log("SERVER, CALLING getPasswordRecoveryEmail");
+      let { email } = args;
+      let user = await new models.User(email).fetch();
+      if (!user) {
+        throw new Error('Unable to match the provided credentials');
+      }
+      
+      const token = jwt.sign({ user: _.pick(user.attributes, ['date', 'password'])}, APP_SECRET, {
+        expiresIn: 360*60
+      })
+      
       knex('users').where(args).then((data) => {
-        sendgrid.sendEmail(data[0].first_name, data[0].email)
+        sendgrid.sendEmail(data[0].first_name, data[0].email, token)
       })
     },
-  }
+    updatePassword: async (parent, args, { models, knex }) => {
+      const { email } = args;
+      const { password } = args;
+      const user = await new models.User({email}).fetch();
+      const { id } = user;
+      user.attributes['password'] = password;
+      user.hashPassword();
+      let updated = await new models.User(user.attributes).save();
+    },
+    createLoanPayment: async (parent, args, { models }) => await new models.Loan_Payment(args).save(null, {method: 'insert'}),
+    deleteBillCategory: (parent, args, { knex }) => knex('bill_categories').where(args).del(),
+    createLoan: async (parent, args, { models }) => await new models.Loan(args).save(null, {method:'insert'})},
 }
-
-
-
-

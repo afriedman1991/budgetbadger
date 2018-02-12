@@ -4,12 +4,13 @@ import gql from 'graphql-tag';
 import Bank from './BankContainer.jsx';
 import { App, Header, Section, Footer, Article, Title, Box, Paragraph, Menu, Anchor, Card, TextInput, FormField } from 'grommet';
 
-const UPDATE_USER = gql`mutation
-  updateUser($email: String!, $first_name: String, $last_name: String, $city: String, $street: String, $zip_code: String, $state: String, $phone: String) {
-   updateUser(email: $email, first_name: $first_name, last_name: $last_name, city: $city, street: $street, zip_code: $zip_code, state: $state, phone: $phone) {
-     email
- }
-}`
+const UPDATE_USER = gql`
+  mutation updateUser($email: String!, $first_name: String, $last_name: String, $city: String, $street: String, $zip_code: String, $state: String, $phone: String) {
+    updateUser(email: $email, first_name: $first_name, last_name: $last_name, city: $city, street: $street, zip_code: $zip_code, state: $state, phone: $phone) {
+      email
+    }
+  }
+`
 
 class ProfileEdit extends Component {
   constructor({userInfo}) {

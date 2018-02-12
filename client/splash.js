@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Link, Switch } from 'react-router-dom';
 import Splash from './components/pages/Splash.jsx';
 import SplashSignIn from './components/pages/SplashSignIn.jsx';
 import SplashSignUp from './components/pages/SplashSignUp.jsx';
@@ -9,7 +9,8 @@ import ApolloClient from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from 'react-apollo';
-import PasswordRecoveryModal from './components/pages/PasswordRecoveryModal.jsx';
+import PasswordRecoveryModal from './components/pages/PasswordReset/PasswordRecoveryModal.jsx';
+import PasswordResetPage from './components/pages/PasswordReset/PasswordResetPage.jsx';
 
 const httpLink = new HttpLink();
 
@@ -27,6 +28,8 @@ class SplashHome extends Component {
   }
 
   render() {
+    const { match } = this.props;
+    console.log('MATCH:',match);
     return (
       <ApolloProvider client={client}>
         <App centered={false}>
@@ -58,18 +61,21 @@ class SplashHome extends Component {
                   </Box>
                 </div>
               </Header>
-              <Route exact={true} path="/home" render={() => (
-                <Splash client={client} />
-              )} />
-              <Route exact={true} path="/SplashSignIn" render={() => (
-                <SplashSignIn client={client} />
-              )} />
-              <Route exact={true} path="/SplashSignUp" render={() => (
-                <SplashSignUp client={client} />
-              )} />
-              <Route exact={true} path="/PasswordRecovery" render={() => (
-                <PasswordRecoveryModal />
-              )} />
+              <Switch>
+                <Route exact={true} path="/home" render={() => (
+                  <Splash client={client} />
+                )} />
+                <Route exact={true} path="/SplashSignIn" render={() => (
+                  <SplashSignIn client={client} />
+                )} />
+                <Route exact={true} path="/SplashSignUp" render={() => (
+                  <SplashSignUp client={client} />
+                )} />
+                <Route exact={true} path="/PasswordRecovery" render={() => (
+                  <PasswordRecoveryModal />
+                )} />
+                <Route path='/PasswordResetPage/:id' component={PasswordResetPage}/>
+              </Switch>
             </div>
           </BrowserRouter>
         </App>

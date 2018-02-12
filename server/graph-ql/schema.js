@@ -12,6 +12,7 @@ module.exports = `
     city: String
     state: String
     phone: String
+    date: [String]
     transactions: [Transaction!]
     school: [School!]
     accounts: [Account!]
@@ -133,7 +134,7 @@ module.exports = `
 
   type Mutation {
     createTransaction(user_id: Int!, amount: Float!, date: String!, category: String!, name: String!, account_id: String!, street: String, zip_code: String, state: String ): Transaction
-    createUser(email: String!, password: String!): [String!]
+    createUser(email: String!, password: String!, date: String): [String!]
     createAccount(id: String!, user_id: Int!, bank_name: String!, bank_id: String!, type: String!, current_balance: Int!): Account!
     createSchool(name: String!): School!
     createLoan(name: String!, amount: Float!, interest_rate: Float!, inception_date: String!, end_date: String!, user_id: Int!): Loan
@@ -168,6 +169,9 @@ module.exports = `
     deleteBillCategory(id: Int!): Int!
     createBankAccount(user_id: Int!, public_key: String!): String!
     getUpdatedTransactions(user_id: Int!): [Transaction!]
-    getPasswordRecoveryEmail(email: String!) : [User!]
+    getPasswordRecoveryEmail(email: String!): [User!]
+    updatePassword(
+      email: String!
+      password: String!): [String!]
   }
   `

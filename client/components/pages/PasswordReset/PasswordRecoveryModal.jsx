@@ -1,7 +1,8 @@
 import React, { Component } from 'React';
-import { Anchor, Box, Button, Card, Columns, CheckBox, Form, FormFields, Footer, Header, Heading, Label, Paragraph, TextInput, Tiles, Layer, PasswordInput } from 'grommet';
-import { graphql, compose, withApollo } from 'react-apollo';
+import { Anchor, Box, Button, Paragraph, TextInput } from 'grommet';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
+import { BrowserRouter, Route, Link } from 'react-router-dom';
 
 class PasswordRecoveryModal extends Component {
   constructor (props) {
@@ -13,23 +14,22 @@ class PasswordRecoveryModal extends Component {
   }
 
   sendEmail() {
-    console.log("RIGHT BEFORE MUTATION");
-    this.props.mutate({
-      variables: { email: this.state.user_email }
-    })
-    .then(({ data }) => {
-      console.log('GOT THE DATA!! WOOHoOoOoOoOoOoOoOoOoOo', data);
-    }).catch((error) => {
-      console.error("I feel so sad now :( no... NOoOoOoOoOoOoOoOo!!!!!", error);
-    })
-    console.log("AFTER MUTATION, MAYBE STILL WAITING FOR PROMISES TO RESOLVE");
+    if (this.state.user_email.length <= 0) {
+      window.alert('Enter an email before you try submitting');
+      return
+    } else {
+      this.props.mutate({
+        variables: { email: this.state.user_email }
+      })
+    }
+    return
   }
 
   render() {
     return (
       <Box full={false} alignSelf="center" pad="small" size={{ height: "medium", width: "medium" }} pad="medium">
         <Paragraph align="center">Please enter your email in the form below, and we'll send you a special link to reset your password.</Paragraph>
-        <Paragraph align="center">Please be mindful that the link will only be active for the next 20 minutes</Paragraph>
+        <Paragraph align="center">Please be mindful that the link will only be active for 15 minutes after you've opened it</Paragraph>
         <TextInput name="userEmail" onDOMChange={e => {
               this.setState({user_email: e.target.value})
             }
